@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rotating Sphere with White Dots</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Three.js from a CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      // Create the scene and camera
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      // Move the camera to the center of the sphere
+      camera.position.set(0, 0, 0);
+
+      // Create the renderer and attach it to the DOM
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // Create a group to hold our points (dots)
+      const group = new THREE.Group();
+      scene.add(group);
+
+      // Parameters for the sphere of dots
+      const numPoints = 1000; // Number of dots
+      const radius = 2;       // Radius of the sphere
+      const positions = new Float32Array(numPoints * 3);
+
+      // Generate points uniformly distributed on the sphere
+      for (let i = 0; i < numPoints; i++) {
+        const theta = Math.random() * 2 * Math.PI;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const x = radius * Math.sin(phi) * Math.cos(theta);
+        const y = radius * Math.sin(phi) * Math.sin(theta);
+        const z = radius * Math.cos(phi);
+        positions[i * 3] = x;
+        positions[i * 3 + 1] = y;
+        positions[i * 3 + 2] = z;
+      }
+
+      // Create buffer geometry and add the positions
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(positions, 3)
+      );
+
+      // Create the points material (white dots)
+      const material = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.005
+      });
+
+      // Create and add the points object to the group
+      const points = new THREE.Points(geometry, material);
+      group.add(points);
+
+      // Define the rotation axis from top right to bottom right.
+      // In this case, we use the vector (1, 0, -1) normalized.
+      const axis = new THREE.Vector3(1, 0, -1).normalize();
+      const rotationSpeed = 0.001;
+
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        // Rotate the group around the specified axis
+        group.rotateOnAxis(axis, rotationSpeed);
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Update the renderer and camera on window resize
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    </script>
+  </body>
+</html>
