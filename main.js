@@ -12,7 +12,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Reusable function to create a sphere of white dots
-function createPointsSphere(numPoints, radius, pointSize, distort = 0.2) {
+function createPointsSphere(numPoints, radius, pointSize, distort = 0.35) {
     const group = new THREE.Group();
     const positions = new Float32Array(numPoints * 3);
     for (let i = 0; i < numPoints; i++) {
@@ -29,16 +29,16 @@ function createPointsSphere(numPoints, radius, pointSize, distort = 0.2) {
     }
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const material = new THREE.PointsMaterial({ color: 0xffffff, size: pointSize });
+    const material = new THREE.PointsMaterial({ color: 0xffffff, size: pointSize * Math.random() });
     const points = new THREE.Points(geometry, material);
     group.add(points);
     return group;
   }
 
 // Create three spheres with different parameters
-const sphere1 = createPointsSphere(2000, 1, 0.01);
-const sphere2 = createPointsSphere(2000, 2, 0.01);
-const sphere3 = createPointsSphere(2000, 3, 0.01);
+const sphere1 = createPointsSphere(2000, 1, 0.02);
+const sphere2 = createPointsSphere(2000, 2, 0.02);
+const sphere3 = createPointsSphere(2000, 3, 0.02);
 // const sphere4 = createPointsSphere(2500, 4, 0.01);
 
 // Add the spheres to the scene
